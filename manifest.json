@@ -1,0 +1,26 @@
+{
+    "name": "Vtop Captcha Solver",
+    "description": "Solves your Vtop Captchas for you!",
+    "version": "2.0.0.4",
+    "icons":{
+        "48":"./icons/good.png"
+    },
+    "permissions":["storage"],
+    "action": {
+        "default_popup": "npop.html"
+    },
+    "content_scripts": [
+        {
+            "matches":["*://*.vit.ac.in/*"],
+            "js": ["cs.js", "popup.js"]
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources":["/weights.json"],
+            "matches":["*://*.vit.ac.in/*"]
+        }
+    ],
+    "content_security_policy":{},
+    "manifest_version": 3
+}

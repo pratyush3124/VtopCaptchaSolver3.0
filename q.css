@@ -1,0 +1,44 @@
+.outer {
+    background: rgb(248, 34, 113);
+    background: linear-gradient(135deg, rgba(248, 34, 113, 0.5) 0%, rgba(161, 117, 182, 0.35) 50%, rgba(72, 199, 252, 0.35) 100%);
+}
+
+.h2 {
+
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 23px;
+    color: black;
+}
+
+.paybtn {
+    background: rgb(255, 255, 255);
+    color: black;
+    border-radius: 5px;
+    transition: 0.3s;
+    cursor: pointer;
+    font-size: 19px;
+    padding: 4px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.paybtn:hover {
+    background: rgb(248, 34, 113);
+    background: linear-gradient(135deg, rgba(248, 34, 113, 0.8) 0%, rgba(161, 117, 182, 0.8) 50%, rgba(72, 199, 252, 0.8) 100%);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+
+
+}
+
+.text {
+    font-size: large;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: black;
+}
+
+a{
+    /* color:black; */
+    text-decoration: none;
+}
