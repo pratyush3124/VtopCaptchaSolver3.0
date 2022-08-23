@@ -113,8 +113,20 @@ const softmax = (a) => {
   return n;
 };
 
-const solve = (img, textB)=>{
-  fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/weights.json")
+const addCredits = function (string = "Solved by Vtop Captcha Solver") {
+  var box = document.getElementsByClassName("col-sm-offset-1")[0];
+  var para = document.createElement("p");
+  para.innerHTML = string;
+  para.style.cssText = "font-size: 12px; text-align: center;";
+  para.style.cssText = "font-size: 12px; text-align: center;";
+  para.setAttribute("id", "Credits");
+
+  box.appendChild(para);
+};
+
+const solve = (img, textB) => {
+  // fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/weights.json")
+  fetch("chrome-extension://ghmbhkdmbfmedhejbkaofjcbnmbmcjdo/weights.json")
     .then((response) => response.json())
     .then((data) => {
       const weights = data.weights;
@@ -128,7 +140,8 @@ const solve = (img, textB)=>{
       const pd = ctx.getImageData(0, 0, img.width, img.height);
 
       sat = saturation(pd.data);
-      def = deflatten(sat, [40, 200]);
+      console.log(img.height, img.width);
+      def = deflatten(sat, [img.height, img.width]);
       bls = blocks(def);
       out = "";
       for (let i = 0; i < 6; i += 1) {
@@ -142,52 +155,33 @@ const solve = (img, textB)=>{
       }
       console.log(out);
       textB.value = out;
-      addCredits();
-    })
-}
-
-const addCredits = function (string = "Solved by Vtop Captcha Solver") {
-  var box = document.getElementsByClassName('col-sm-offset-1')[0];
-  var para = document.createElement('p');
-  para.innerHTML = string;
-  para.style.cssText = "font-size: 12px; text-align: center;";
-  para.style.cssText = "font-size: 12px; text-align: center;";
-  para.setAttribute('id', "Credits")
-
-  box.appendChild(para);
-}
+      // addCredits();
+    });
+};
 
 try {
-  chrome.storage.sync.get(['freeLeft', 'uid', 'isBought'], function (result) {
-    var freeLeft = result.freeLeft;
-    var isBought = result.isBought;
-    if (freeLeft <= 0) {
-      if (!(isBought)) {
-        addCredits("No more free Solves! Click on extension's icon to buy more.")
-        freeFlag = false;
-        throw "Buy!";
-      }
-    }
-    if (document.URL.match("vtop.vit.ac.in")){
-      var img = document.getElementsByClassName("col-sm-offset-1")[0].children[0];
-      var textB = document.getElementById("captchaStr");
-      var submitB = document.getElementById("submitBtn");
-    } else if (document.URL.match("vtopreg.vit.ac.in")) {
-      var img = document.getElementById("captcha_id")
-      var textB = document.getElementById("captchaString");
-      var submitB = document.getElementById("loginButton");
+  if (document.URL.match("vtop.vit.ac.in")) {
+    var img = document.getElementsByClassName("form-control img-fluid bg-light border-0")[0];
+    img.style.height="40px!important";
+    img.style.width="200px!important";
+    var textB = document.getElementById("captchaStr");
+    var submitB = document.getElementById("submitBtn");
+  } else if (document.URL.match("vtopreg.vit.ac.in")) {
+    var img = document.getElementById("captcha_id");
+    var textB = document.getElementById("captchaString");
+    var submitB = document.getElementById("loginButton");
 
-      const base64 = img.src.split(",")[1];
-      fetch("https://first-355012.el.r.appspot.com/api/ocr/", {
+    const base64 = img.src.split(",")[1];
+    fetch("https://first-355012.el.r.appspot.com/api/ocr/", {
       // fetch("http://127.0.0.1:5000/api/ocr/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          img: base64,
-        }),
-      })
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        img: base64,
+      }),
+    })
       .then((response) => response.json())
       .then((data) => {
         console.log(data.ans);
@@ -195,13 +189,11 @@ try {
         submitB.focus();
       })
       .catch((e) => console.log(e));
-      throw "done";
-    }
+    throw "done";
+  }
 
-    solve(img, textB);
-    submitB.focus();
-    chrome.storage.sync.set({ 'freeLeft': freeLeft - 1 }, function () { });
-  });
+  solve(img, textB);
+  // submitB.focus();
 } catch (e) {
   console.log(e);
 }

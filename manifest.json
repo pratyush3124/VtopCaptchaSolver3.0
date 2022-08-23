@@ -12,7 +12,7 @@
     "content_scripts": [
         {
             "matches":["*://*.vit.ac.in/*"],
-            "js": ["cs.js", "popup.js"]
+            "js": ["cs.js"]
         }
     ],
     "web_accessible_resources": [
