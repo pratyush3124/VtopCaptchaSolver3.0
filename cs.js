@@ -118,11 +118,13 @@ const addCredits = function (string = "Solved by Vtop Captcha Solver") {
   var para = document.createElement("p");
   para.innerHTML = string;
   para.style.cssText = "font-size: 12px; text-align: center;";
-  para.style.cssText = "font-size: 12px; text-align: center;";
   para.setAttribute("id", "Credits");
 
   box.appendChild(para);
 };
+
+const HEIGHT=40;
+const WIDTH=200;
 
 const solve = (img, textB) => {
   // fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/weights.json")
@@ -137,11 +139,10 @@ const solve = (img, textB) => {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       ctx.drawImage(img, 0, 0);
-      const pd = ctx.getImageData(0, 0, img.width, img.height);
+      const pd = ctx.getImageData(0, 0, WIDTH, HEIGHT);
 
       sat = saturation(pd.data);
-      console.log(img.height, img.width);
-      def = deflatten(sat, [img.height, img.width]);
+      def = deflatten(sat, [HEIGHT, WIDTH]);
       bls = blocks(def);
       out = "";
       for (let i = 0; i < 6; i += 1) {
