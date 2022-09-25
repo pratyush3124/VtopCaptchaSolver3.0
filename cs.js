@@ -127,8 +127,8 @@ const HEIGHT=40;
 const WIDTH=200;
 
 const solve = (img, textB) => {
-  // fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/weights.json")
-  fetch("chrome-extension://ghmbhkdmbfmedhejbkaofjcbnmbmcjdo/weights.json")
+  // fetch("chrome-extension://plmmafgaagooagiemlikkajepfgalfdo/weights.json")
+  fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/weights.json")
     .then((response) => response.json())
     .then((data) => {
       const weights = data.weights;
