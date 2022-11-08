@@ -50,7 +50,7 @@ const deflatten = (ar, shape) => {
 };
 
 const blocks = (im) => {
-  bls = new Array(6);
+  blocksList = new Array(6);
   for (let a = 0; a < 6; a += 1) {
     c = 0;
     d = 0;
@@ -58,9 +58,9 @@ const blocks = (im) => {
     y1 = 7 + 5 * (a % 2) + 1;
     x2 = (a + 2) * 25 + 1;
     y2 = 35 - 5 * ((a + 1) % 2);
-    bls[a] = im.slice(y1, y2).map((i) => i.slice(x1, x2));
+    blocksList[a] = im.slice(y1, y2).map((i) => i.slice(x1, x2));
   }
-  return bls;
+  return blocksList;
 };
 
 const matMul = (a, b) => {
@@ -126,7 +126,7 @@ const addCredits = function (string = "Solved by Vtop Captcha Solver") {
 const HEIGHT=40;
 const WIDTH=200;
 
-const solve = (img, textButton) => {
+const solve = (img, textBox) => {
   // fetch("chrome-extension://plmmafgaagooagiemlikkajepfgalfdo/weights.json")
   fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/weights.json")
     .then((response) => response.json())
@@ -143,19 +143,19 @@ const solve = (img, textButton) => {
 
       sat = saturation(pd.data);
       def = deflatten(sat, [HEIGHT, WIDTH]);
-      bls = blocks(def);
+      blocksList = blocks(def);
       out = "";
       for (let i = 0; i < 6; i += 1) {
-        bls[i] = preProcess(bls[i]);
-        bls[i] = [flatten(bls[i])];
-        bls[i] = matMul(bls[i], weights);
-        bls[i] = matAdd(...bls[i], biases);
-        bls[i] = softmax(bls[i]);
-        bls[i] = bls[i].indexOf(Math.max(...bls[i]));
-        out += label_txt[bls[i]];
+        blocksList[i] = preProcess(blocksList[i]);
+        blocksList[i] = [flatten(blocksList[i])];
+        blocksList[i] = matMul(blocksList[i], weights);
+        blocksList[i] = matAdd(...blocksList[i], biases);
+        blocksList[i] = softmax(blocksList[i]);
+        blocksList[i] = blocksList[i].indexOf(Math.max(...blocksList[i]));
+        out += label_txt[blocksList[i]];
       }
       console.log(out);
-      textButton.value = out;
+      textBox.value = out;
       // addCredits();
     });
 };
@@ -170,11 +170,11 @@ try {
     }
     img.style.height="40px!important";
     img.style.width="200px!important";
-    var textButton = document.getElementById("captchaStr");
+    var textBox = document.getElementById("captchaStr");
     var submitButton = document.getElementById("submitBtn");
   } else if (document.URL.match("vtopreg.vit.ac.in")) {
     var img = document.getElementById("captcha_id");
-    var textButton = document.getElementById("captchaString");
+    var textBox = document.getElementById("captchaString");
     var submitButton = document.getElementById("loginButton");
 
     const base64 = img.src.split(",")[1];
@@ -191,14 +191,14 @@ try {
       .then((response) => response.json())
       .then((data) => {
         console.log(data.ans);
-        textButton.value = data.ans;
+        textBox.value = data.ans;
         submitButton.focus();
       })
       .catch((e) => console.log(e));
     throw "done";
   }
 
-  solve(img, textButton);
+  solve(img, textBox);
   // submitButton.focus();
 } catch (e) {
   console.log(e);
