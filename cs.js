@@ -126,7 +126,7 @@ const addCredits = function (string = "Solved by Vtop Captcha Solver") {
 const HEIGHT=40;
 const WIDTH=200;
 
-const solve = (img, textB) => {
+const solve = (img, textButton) => {
   // fetch("chrome-extension://plmmafgaagooagiemlikkajepfgalfdo/weights.json")
   fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/weights.json")
     .then((response) => response.json())
@@ -155,22 +155,27 @@ const solve = (img, textB) => {
         out += label_txt[bls[i]];
       }
       console.log(out);
-      textB.value = out;
+      textButton.value = out;
       // addCredits();
     });
 };
 
 try {
   if (document.URL.match("vtop.vit.ac.in")) {
+    // student and employee login
     var img = document.getElementsByClassName("form-control img-fluid bg-light border-0")[0];
+    if (!img) {
+      // parent login
+      var img = document.getElementsByClassName("form-control bg-light border-0")[0];
+    }
     img.style.height="40px!important";
     img.style.width="200px!important";
-    var textB = document.getElementById("captchaStr");
-    var submitB = document.getElementById("submitBtn");
+    var textButton = document.getElementById("captchaStr");
+    var submitButton = document.getElementById("submitBtn");
   } else if (document.URL.match("vtopreg.vit.ac.in")) {
     var img = document.getElementById("captcha_id");
-    var textB = document.getElementById("captchaString");
-    var submitB = document.getElementById("loginButton");
+    var textButton = document.getElementById("captchaString");
+    var submitButton = document.getElementById("loginButton");
 
     const base64 = img.src.split(",")[1];
     fetch("https://first-355012.el.r.appspot.com/api/ocr/", {
@@ -186,15 +191,15 @@ try {
       .then((response) => response.json())
       .then((data) => {
         console.log(data.ans);
-        textB.value = data.ans;
-        submitB.focus();
+        textButton.value = data.ans;
+        submitButton.focus();
       })
       .catch((e) => console.log(e));
     throw "done";
   }
 
-  solve(img, textB);
-  // submitB.focus();
+  solve(img, textButton);
+  // submitButton.focus();
 } catch (e) {
   console.log(e);
 }
