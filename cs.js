@@ -177,25 +177,27 @@ try {
     var textBox = document.getElementById("captchaString");
     var submitButton = document.getElementById("loginButton");
 
+    img.style.height="40px!important";
+    img.style.width="200px!important";
     const base64 = img.src.split(",")[1];
-    fetch("https://first-355012.el.r.appspot.com/api/ocr/", {
-      // fetch("http://127.0.0.1:5000/api/ocr/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        img: base64,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data.ans);
-        textBox.value = data.ans;
-        submitButton.focus();
-      })
-      .catch((e) => console.log(e));
-    throw "done";
+    // fetch("https://first-355012.el.r.appspot.com/api/ocr/", {
+    //   // fetch("http://127.0.0.1:5000/api/ocr/", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     img: base64,
+    //   }),
+    // })
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     console.log(data.ans);
+    //     textBox.value = data.ans;
+    //     submitButton.focus();
+    //   })
+    //   .catch((e) => console.log(e));
+    // throw "done";
   }
 
   solve(img, textBox);
