@@ -1,4 +1,4 @@
-const saturation = (d) => {
+function saturation(d){
   sat = new Array(d.length / 4);
   for (let i = 0; i < d.length; i += 4) {
     min = Math.min(d[i], d[i + 1], d[i + 2]);
@@ -8,7 +8,7 @@ const saturation = (d) => {
   return sat;
 };
 
-const preProcess = (im) => {
+function preProcess(im){
   let avg = 0;
   im.forEach((e) => e.forEach((f) => (avg += f)));
   avg /= 24 * 22;
@@ -26,7 +26,7 @@ const preProcess = (im) => {
   return ne;
 };
 
-const flatten = (ar) => {
+function flatten(ar){
   var ne = new Array(ar.length * ar[0].length);
   for (let i = 0; i < ar.length; i += 1) {
     for (let j = 0; j < ar[0].length; j += 1) {
@@ -36,7 +36,7 @@ const flatten = (ar) => {
   return ne;
 };
 
-const deflatten = (ar, shape) => {
+function deflatten(ar, shape){
   n = shape[0];
   m = shape[1];
   var img = new Array(n);
@@ -49,7 +49,7 @@ const deflatten = (ar, shape) => {
   return img;
 };
 
-const blocks = (im) => {
+function VelloreBlocks(im){
   blocksList = new Array(6);
   for (let a = 0; a < 6; a += 1) {
     c = 0;
@@ -63,7 +63,7 @@ const blocks = (im) => {
   return blocksList;
 };
 
-const matMul = (a, b) => {
+function matMul(a, b){
   if (!Array.isArray(a) || !Array.isArray(b) || !a.length || !b.length) {
     throw new Error("arguments should be in 2-dimensional array format");
   }
@@ -92,7 +92,7 @@ const matMul = (a, b) => {
   return product;
 };
 
-const matAdd = (a, b) => {
+function matAdd(a, b){
   let x = a.length;
   let c = new Array(x);
   for (let i = 0; i < x; i++) {
@@ -101,7 +101,7 @@ const matAdd = (a, b) => {
   return c;
 };
 
-const softmax = (a) => {
+function softmax(a){
   var n = [...a];
   let s = 0;
   n.forEach((f) => {
@@ -143,7 +143,7 @@ const solve = (img, textBox) => {
 
       sat = saturation(pd.data);
       def = deflatten(sat, [HEIGHT, WIDTH]);
-      blocksList = blocks(def);
+      blocksList = VelloreBlocks(def);
       out = "";
       for (let i = 0; i < 6; i += 1) {
         blocksList[i] = preProcess(blocksList[i]);
@@ -172,6 +172,7 @@ try {
     img.style.width="200px!important";
     var textBox = document.getElementById("captchaStr");
     var submitButton = document.getElementById("submitBtn");
+
   } else if (document.URL.match("vtopreg.vit.ac.in")) {
     var img = document.getElementById("captcha_id");
     var textBox = document.getElementById("captchaString");
@@ -198,6 +199,12 @@ try {
     //   })
     //   .catch((e) => console.log(e));
     // throw "done";
+  
+  } else if(document.URL.match("vconnect.vit.ac.in")){
+    var a = document.getElementById("captchaRefresh");
+    if (a!==null){
+      var b = document.getElementsByClassName('col-md-offset-1')[0].children[1].click()
+    }
   }
 
   solve(img, textBox);

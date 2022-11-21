@@ -12,7 +12,7 @@
     "content_scripts": [
         {
             "matches":["*://*.vit.ac.in/*"],
-            "js": ["cs.js"]
+            "js": ["cs.js", "Solver.js"]
         }
     ],
     "web_accessible_resources": [
