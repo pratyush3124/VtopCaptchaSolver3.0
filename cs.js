@@ -1,69 +1,16 @@
-function saturation(d){
-  sat = new Array(d.length / 4);
-  for (let i = 0; i < d.length; i += 4) {
-    min = Math.min(d[i], d[i + 1], d[i + 2]);
-    max = Math.max(d[i], d[i + 1], d[i + 2]);
-    sat[i / 4] = Math.round(((max - min) * 255) / max);
+function softmax(a){
+  var n = [...a];
+  let s = 0;
+  n.forEach((f) => {
+    s += Math.exp(f);
+  });
+  for (let i = 0; i < a.length; i++) {
+    n[i] = Math.exp(a[i]) / s;
   }
-  return sat;
+  return n;
 };
 
-function preProcess(im){
-  let avg = 0;
-  im.forEach((e) => e.forEach((f) => (avg += f)));
-  avg /= 24 * 22;
-  var ne = new Array(im.length);
-  for (let i = 0; i < im.length; i += 1) {
-    ne[i] = new Array(im[0].length);
-    for (let j = 0; j < im[0].length; j += 1) {
-      if (im[i][j] > avg) {
-        ne[i][j] = 1;
-      } else {
-        ne[i][j] = 0;
-      }
-    }
-  }
-  return ne;
-};
-
-function flatten(ar){
-  var ne = new Array(ar.length * ar[0].length);
-  for (let i = 0; i < ar.length; i += 1) {
-    for (let j = 0; j < ar[0].length; j += 1) {
-      ne[i * ar[0].length + j] = ar[i][j];
-    }
-  }
-  return ne;
-};
-
-function deflatten(ar, shape){
-  n = shape[0];
-  m = shape[1];
-  var img = new Array(n);
-  for (let i = 0; i < n; i += 1) {
-    img[i] = new Array(m);
-    for (let j = 0; j < m; j += 1) {
-      img[i][j] = ar[i * m + j];
-    }
-  }
-  return img;
-};
-
-function VelloreBlocks(im){
-  blocksList = new Array(6);
-  for (let a = 0; a < 6; a += 1) {
-    c = 0;
-    d = 0;
-    x1 = (a + 1) * 25 + 2;
-    y1 = 7 + 5 * (a % 2) + 1;
-    x2 = (a + 2) * 25 + 1;
-    y2 = 35 - 5 * ((a + 1) % 2);
-    blocksList[a] = im.slice(y1, y2).map((i) => i.slice(x1, x2));
-  }
-  return blocksList;
-};
-
-function matMul(a, b){
+function matrixMultiplication(a, b){
   if (!Array.isArray(a) || !Array.isArray(b) || !a.length || !b.length) {
     throw new Error("arguments should be in 2-dimensional array format");
   }
@@ -92,7 +39,7 @@ function matMul(a, b){
   return product;
 };
 
-function matAdd(a, b){
+function matrixAddition(a, b){
   let x = a.length;
   let c = new Array(x);
   for (let i = 0; i < x; i++) {
@@ -101,17 +48,84 @@ function matAdd(a, b){
   return c;
 };
 
-function softmax(a){
-  var n = [...a];
-  let s = 0;
-  n.forEach((f) => {
-    s += Math.exp(f);
-  });
-  for (let i = 0; i < a.length; i++) {
-    n[i] = Math.exp(a[i]) / s;
+function saturation(d){
+  sat = new Array(d.length / 4);
+  for (let i = 0; i < d.length; i += 4) {
+    min = Math.min(d[i], d[i + 1], d[i + 2]);
+    max = Math.max(d[i], d[i + 1], d[i + 2]);
+    sat[i / 4] = Math.round(((max - min) * 255) / max);
   }
-  return n;
+  return sat;
 };
+
+function flatten(ar){
+  var ne = new Array(ar.length * ar[0].length);
+  for (let i = 0; i < ar.length; i += 1) {
+    for (let j = 0; j < ar[0].length; j += 1) {
+      ne[i * ar[0].length + j] = ar[i][j];
+    }
+  }
+  return ne;
+};
+
+function deflatten(ar, shape){
+  n = shape[0];
+  m = shape[1];
+  var img = new Array(n);
+  for (let i = 0; i < n; i += 1) {
+    img[i] = new Array(m);
+    for (let j = 0; j < m; j += 1) {
+      img[i][j] = ar[i * m + j];
+    }
+  }
+  return img;
+};
+
+function vellorePreProcess(im){
+  let avg = 0;
+  im.forEach((e) => e.forEach((f) => (avg += f)));
+  avg /= 24 * 22;
+  var ne = new Array(im.length);
+  for (let i = 0; i < im.length; i += 1) {
+    ne[i] = new Array(im[0].length);
+    for (let j = 0; j < im[0].length; j += 1) {
+      if (im[i][j] > avg) {
+        ne[i][j] = 1;
+      } else {
+        ne[i][j] = 0;
+      }
+    }
+  }
+  return ne;
+};
+
+function chennaiPreProcess(im){
+
+}
+
+function VelloreBlocks(im){
+  blocksList = new Array(6);
+  for (let a = 0; a < 6; a += 1) {
+    x1 = (a + 1) * 25 + 2;
+    y1 = 7 + 5 * (a % 2) + 1;
+    x2 = (a + 2) * 25 + 1;
+    y2 = 35 - 5 * ((a + 1) % 2);
+    blocksList[a] = im.slice(y1, y2).map((i) => i.slice(x1, x2));
+  }
+  return blocksList;
+};
+
+function chennaiBlocks(im){
+  blocksList = new Array(6);
+  for (let a=0; a<5; a+=1){
+    x1 = (i)*30
+    y1 = 10
+    x2 = (i)*30+25
+    y2 = 45
+    blocksList[a] = img.slice(y1,y2).map((i) => i.slice(x1,x2));
+  }
+  return blocksList;
+}
 
 const addCredits = function (string = "Solved by Vtop Captcha Solver") {
   var box = document.getElementsByClassName("col-sm-offset-1")[0];
@@ -123,14 +137,43 @@ const addCredits = function (string = "Solved by Vtop Captcha Solver") {
   box.appendChild(para);
 };
 
-const HEIGHT=40;
-const WIDTH=200;
-
-const solve = (img, textBox) => {
-  // fetch("chrome-extension://plmmafgaagooagiemlikkajepfgalfdo/weights.json")
-  fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/weights.json")
+const solveChennai = (img, textBox) => {
+  // fetch("chrome-extension://plmmafgaagooagiemlikkajepfgalfdo/chennaiWeights.json")
+  fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/chennaiWeights.json")
     .then((response) => response.json())
     .then((data) => {
+
+      const HEIGHT=45;
+      const WIDTH=180;
+
+      const weights = data.weights;
+      const biases = data.biases;
+      
+      const label_txt = "ABCDEFGHIJKLMNPQRSTUVWXYZ123456789";
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      const pd = ctx.getImageData(0, 0, WIDTH, HEIGHT);
+
+      blocksList = chennaiBlocks(pd.data);
+      out = "";
+      for (let i=0; i<6; i++){
+
+      }
+
+    })
+}
+
+const solveVellore = (img, textBox) => {
+  // fetch("chrome-extension://plmmafgaagooagiemlikkajepfgalfdo/velloreWeights.json")
+  fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/velloreWeights.json")
+    .then((response) => response.json())
+    .then((data) => {
+
+      const HEIGHT=40;
+      const WIDTH=200;
+      
       const weights = data.weights;
       const biases = data.biases;
 
@@ -146,10 +189,10 @@ const solve = (img, textBox) => {
       blocksList = VelloreBlocks(def);
       out = "";
       for (let i = 0; i < 6; i += 1) {
-        blocksList[i] = preProcess(blocksList[i]);
+        blocksList[i] = vellorePreProcess(blocksList[i]);
         blocksList[i] = [flatten(blocksList[i])];
-        blocksList[i] = matMul(blocksList[i], weights);
-        blocksList[i] = matAdd(...blocksList[i], biases);
+        blocksList[i] = matrixMultiplication(blocksList[i], weights);
+        blocksList[i] = matrixAddition(...blocksList[i], biases);
         blocksList[i] = softmax(blocksList[i]);
         blocksList[i] = blocksList[i].indexOf(Math.max(...blocksList[i]));
         out += label_txt[blocksList[i]];
@@ -172,6 +215,7 @@ try {
     img.style.width="200px!important";
     var textBox = document.getElementById("captchaStr");
     var submitButton = document.getElementById("submitBtn");
+    solveVellore(img, textBox);
 
   } else if (document.URL.match("vtopreg.vit.ac.in")) {
     var img = document.getElementById("captcha_id");
@@ -206,8 +250,6 @@ try {
       var b = document.getElementsByClassName('col-md-offset-1')[0].children[1].click()
     }
   }
-
-  solve(img, textBox);
   // submitButton.focus();
 } catch (e) {
   console.log(e);
