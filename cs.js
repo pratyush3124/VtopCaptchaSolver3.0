@@ -163,13 +163,14 @@ function chennaiBlocks(im){
   return blocksList;
 }
 
-const addCredits = function (string = "Solved by Vtop Captcha Solver") {
-  var box = document.getElementsByClassName("col-sm-offset-1")[0];
-  var para = document.createElement("p");
-  para.innerHTML = string;
-  para.style.cssText = "font-size: 12px; text-align: center;";
-  para.setAttribute("id", "Credits");
-  box.appendChild(para);
+const addCredits = function (box, string="Solved by Vtop Captcha Solver") { 
+  if (box.children[box.children.length-1].innerHTML != string){
+    var para = document.createElement("p");
+    para.innerHTML = string;
+    para.style.cssText = "font-size: 12px; text-align: center;";
+    para.setAttribute("id", "Credits");
+    box.appendChild(para);
+  }
 };
 
 const displayImage = (img) => {
@@ -239,7 +240,8 @@ const solveChennai = (img, textBox) => {
       }
       console.log(out);
       textBox.value = out;
-      // addCredits();
+      var box = document.getElementsByClassName("col-md-offset-1")[0];
+      addCredits(box);
     })
 }
 
@@ -277,7 +279,8 @@ const solveVellore = (img, textBox) => {
       }
       console.log(out);
       textBox.value = out;
-      // addCredits();
+      var box = document.getElementsByClassName("row")[1];
+      addCredits(box); 
     });
 };
 
@@ -285,7 +288,7 @@ try {
   console.log(document.URL)
   if (document.URL.match("vtop.vit.ac.in")) {
     // student and employee login
-    var img = document.getElementsByClassName("form-control img-fluid bg-light border-0")[0];
+    img = document.getElementById("captchaBlock").children[0]
     if (!img) { // parent login
       var img = document.getElementsByClassName("form-control bg-light border-0")[0];
     }
@@ -295,9 +298,9 @@ try {
     var submitButton = document.getElementById("submitBtn");
     solveVellore(img, textBox);
 
-    var container = document.getElementById("bodyContent");
+    var container = document.getElementById("captchaBlock");
     container.addEventListener('DOMSubtreeModified', ()=>{
-      var img = document.getElementsByClassName("form-control img-fluid bg-light border-0")[0];
+      img = document.getElementById("captchaBlock").children[0]
       if (!img) { // parent login
         var img = document.getElementsByClassName("form-control bg-light border-0")[0];
       }
