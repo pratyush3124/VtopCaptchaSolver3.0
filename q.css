@@ -18,6 +18,8 @@
     cursor: pointer;
     font-size: 19px;
     padding: 4px;
+    margin-top: 15px;
+    margin-bottom: 15px;
     margin-left: 20px;
     margin-right: 20px;
 }
@@ -36,6 +38,7 @@
     font-size: large;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     color: black;
+    margin-bottom:20px;
 }
 
 a{
