@@ -12,12 +12,12 @@
     "content_scripts": [
         {
             "matches":["*://*.vit.ac.in/*"],
-            "js": ["cs.js", "Solver.js"]
+            "js": ["cs.js"]
         }
     ],
     "web_accessible_resources": [
         {
-            "resources":["/weights.json"],
+            "resources":["/velloreWeights.json", "/chennaiWeights.json"],
             "matches":["*://*.vit.ac.in/*"]
         }
     ],

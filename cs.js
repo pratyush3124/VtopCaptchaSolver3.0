@@ -69,13 +69,11 @@ function flatten(ar){
 };
 
 function deflatten(ar, shape){
-  n = shape[0];
-  m = shape[1];
-  var img = new Array(n);
-  for (let i = 0; i < n; i += 1) {
-    img[i] = new Array(m);
-    for (let j = 0; j < m; j += 1) {
-      img[i][j] = ar[i * m + j];
+  var img = new Array(shape[0]);
+  for (let i = 0; i < shape[0]; i += 1) {
+    img[i] = new Array(shape[1]);
+    for (let j = 0; j < shape[1]; j += 1) {
+      img[i][j] = ar[i * shape[1] + j];
     }
   }
   return img;
@@ -100,7 +98,45 @@ function vellorePreProcess(im){
 };
 
 function chennaiPreProcess(im){
-
+  // binarized with cleanEdges and invertedColors
+  // console.log("pr", im);
+  for (let i=0; i<im.length; i+=1){
+    for (let j=0; j<im[0].length; j+=1){
+      if (i==0 || j==0 || i==im.length-1 || j==im[0].length-1){
+        // console.log(im[i][j]);
+        im[i][j] = 0;
+        // console.log(im[i][j]);
+      } else {
+        if (im[i][j]/255 > 0.3){
+          im[i][j] = 0;
+        } else {
+          im[i][j] = 1;
+        }
+      }
+    }
+  }
+  // denoized
+  dn = im.map(elem=>elem.slice())
+  for (let i=1; i<im.length-1; i+=1){
+    for (let j=1; j<im[0].length-1; j+=1){
+      s = 0
+      for (let k=-1; k<2; k++){
+        for (let l=-1; l<2; l++){
+          if (k==0 && l==0){
+            continue;
+          } else {
+            s += im[i+k][j+l]
+          }
+        }
+      }
+      if (im[i,j] == 1 && s<4){
+        dn[i,j] = 0
+      } else if (im[i,j] == 0 && s>4){
+        dn[i,j] = 1
+      }
+    }
+  }
+  return dn;
 }
 
 function VelloreBlocks(im){
@@ -117,12 +153,12 @@ function VelloreBlocks(im){
 
 function chennaiBlocks(im){
   blocksList = new Array(6);
-  for (let a=0; a<5; a+=1){
-    x1 = (i)*30
+  for (let a=0; a<6; a+=1){
+    x1 = (a)*30
     y1 = 10
-    x2 = (i)*30+25
+    x2 = (a)*30+25
     y2 = 45
-    blocksList[a] = img.slice(y1,y2).map((i) => i.slice(x1,x2));
+    blocksList[a] = im.slice(y1,y2).map(i => i.slice(x1,x2));
   }
   return blocksList;
 }
@@ -133,13 +169,40 @@ const addCredits = function (string = "Solved by Vtop Captcha Solver") {
   para.innerHTML = string;
   para.style.cssText = "font-size: 12px; text-align: center;";
   para.setAttribute("id", "Credits");
-
   box.appendChild(para);
 };
 
+const displayImage = (img) => {
+  const height = img.length;
+  const width = img[0].length;
+  img = flatten(img)
+  var buffer = new Uint8ClampedArray(width * height * 4);
+  for (let pos=0; pos<buffer.length; pos=pos+4){
+    buffer[pos  ] = img[pos/4]*255;
+    buffer[pos+1] = img[pos/4]*255;
+    buffer[pos+2] = img[pos/4]*255;
+    buffer[pos+3] = 255;
+  }
+  // create off-screen canvas element
+  var image = new Image(width, height);
+  var canvas = document.createElement('canvas'),
+  ctx = canvas.getContext('2d');
+  canvas.width = width;
+  canvas.height = height;
+  // create imageData object
+  var idata = ctx.createImageData(width, height);
+  // set our buffer as source
+  idata.data.set(buffer);
+  // update canvas with new data
+  ctx.putImageData(idata, 0, 0);
+
+  image.src = canvas.toDataURL();
+  document.body.appendChild(image);
+}
+
 const solveChennai = (img, textBox) => {
-  // fetch("chrome-extension://plmmafgaagooagiemlikkajepfgalfdo/chennaiWeights.json")
-  fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/chennaiWeights.json")
+  fetch("chrome-extension://kghehdhpjbiankmldeiballgdcemchjo/chennaiWeights.json")
+  // fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/chennaiWeights.json")
     .then((response) => response.json())
     .then((data) => {
 
@@ -155,25 +218,40 @@ const solveChennai = (img, textBox) => {
       const ctx = canvas.getContext("2d");
       ctx.drawImage(img, 0, 0);
       const pd = ctx.getImageData(0, 0, WIDTH, HEIGHT);
-
-      blocksList = chennaiBlocks(pd.data);
-      out = "";
-      for (let i=0; i<6; i++){
-
+      
+      var dat = new Array(pd.data.length/4);
+      for (let a=0; a<pd.data.length; a+=4){
+        dat[a/4] = pd.data[a];
       }
 
+      def = deflatten(dat, [HEIGHT, WIDTH])
+      blocksList = chennaiBlocks(def);
+      out = "";
+      for (let i=0; i<6; i++){
+        block = chennaiPreProcess(blocksList[i]);
+        // console.log(block)
+        block = [flatten(block)]
+        block = matrixMultiplication(block, weights);
+        block = matrixAddition(...block, biases);
+        block = softmax(block);
+        block = block.indexOf(Math.max(...block));
+        out += label_txt[block];  
+      }
+      console.log(out);
+      textBox.value = out;
+      // addCredits();
     })
 }
 
 const solveVellore = (img, textBox) => {
-  // fetch("chrome-extension://plmmafgaagooagiemlikkajepfgalfdo/velloreWeights.json")
-  fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/velloreWeights.json")
+  fetch("chrome-extension://kghehdhpjbiankmldeiballgdcemchjo/velloreWeights.json")
+  // fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/velloreWeights.json")
     .then((response) => response.json())
     .then((data) => {
 
       const HEIGHT=40;
       const WIDTH=200;
-      
+
       const weights = data.weights;
       const biases = data.biases;
 
@@ -189,13 +267,13 @@ const solveVellore = (img, textBox) => {
       blocksList = VelloreBlocks(def);
       out = "";
       for (let i = 0; i < 6; i += 1) {
-        blocksList[i] = vellorePreProcess(blocksList[i]);
-        blocksList[i] = [flatten(blocksList[i])];
-        blocksList[i] = matrixMultiplication(blocksList[i], weights);
-        blocksList[i] = matrixAddition(...blocksList[i], biases);
-        blocksList[i] = softmax(blocksList[i]);
-        blocksList[i] = blocksList[i].indexOf(Math.max(...blocksList[i]));
-        out += label_txt[blocksList[i]];
+        block = vellorePreProcess(blocksList[i]);
+        block = [flatten(block)];
+        block = matrixMultiplication(block, weights);
+        block = matrixAddition(...block, biases);
+        block = softmax(block);
+        block = block.indexOf(Math.max(...block));
+        out += label_txt[block];
       }
       console.log(out);
       textBox.value = out;
@@ -207,8 +285,7 @@ try {
   if (document.URL.match("vtop.vit.ac.in")) {
     // student and employee login
     var img = document.getElementsByClassName("form-control img-fluid bg-light border-0")[0];
-    if (!img) {
-      // parent login
+    if (!img) { // parent login
       var img = document.getElementsByClassName("form-control bg-light border-0")[0];
     }
     img.style.height="40px!important";
@@ -216,6 +293,34 @@ try {
     var textBox = document.getElementById("captchaStr");
     var submitButton = document.getElementById("submitBtn");
     solveVellore(img, textBox);
+
+    var container = document.getElementById("bodyContent");
+    container.addEventListener('DOMSubtreeModified', ()=>{
+      var img = document.getElementsByClassName("form-control img-fluid bg-light border-0")[0];
+      if (!img) { // parent login
+        var img = document.getElementsByClassName("form-control bg-light border-0")[0];
+      }
+      img.style.height="40px!important";
+      img.style.width="200px!important";
+      var textBox = document.getElementById("captchaStr");
+      var submitButton = document.getElementById("submitBtn");
+      solveVellore(img, textBox);
+    })
+
+  } else if(document.URL.match("vtopcc.vit.ac.in")){
+    var container = document.getElementById("page_outline");
+    container.addEventListener('DOMSubtreeModified', ()=>{
+      var captchaDiv = document.getElementById("captchaRefresh").children[0];
+      if (captchaDiv.children.length == 1){
+        captchaDiv = captchaDiv.children[0]
+      }
+      var img = captchaDiv.children[0];
+      img.style.height="45px!important";
+      img.style.width="180px!important";
+      var textBox = document.getElementById("captchaCheck");
+      var submitButton = document.getElementById("captcha");
+      solveChennai(img, textBox);
+    })
 
   } else if (document.URL.match("vtopreg.vit.ac.in")) {
     var img = document.getElementById("captcha_id");
@@ -243,12 +348,7 @@ try {
     //   })
     //   .catch((e) => console.log(e));
     // throw "done";
-  
-  } else if(document.URL.match("vconnect.vit.ac.in")){
-    var a = document.getElementById("captchaRefresh");
-    if (a!==null){
-      var b = document.getElementsByClassName('col-md-offset-1')[0].children[1].click()
-    }
+
   }
   // submitButton.focus();
 } catch (e) {
