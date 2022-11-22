@@ -202,8 +202,8 @@ const displayImage = (img) => {
 }
 
 const solveChennai = (img, textBox) => {
-  fetch("chrome-extension://kghehdhpjbiankmldeiballgdcemchjo/chennaiWeights.json")
-  // fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/chennaiWeights.json")
+  // fetch("chrome-extension://kghehdhpjbiankmldeiballgdcemchjo/chennaiWeights.json")
+  fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/chennaiWeights.json")
     .then((response) => response.json())
     .then((data) => {
 
@@ -246,8 +246,8 @@ const solveChennai = (img, textBox) => {
 }
 
 const solveVellore = (img, textBox) => {
-  fetch("chrome-extension://kghehdhpjbiankmldeiballgdcemchjo/velloreWeights.json")
-  // fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/velloreWeights.json")
+  // fetch("chrome-extension://kghehdhpjbiankmldeiballgdcemchjo/velloreWeights.json")
+  fetch("chrome-extension://balpfhmdaaahhppiijcgaemeoeojejam/velloreWeights.json")
     .then((response) => response.json())
     .then((data) => {
 
