@@ -282,6 +282,7 @@ const solveVellore = (img, textBox) => {
 };
 
 try {
+  console.log(document.URL)
   if (document.URL.match("vtop.vit.ac.in")) {
     // student and employee login
     var img = document.getElementsByClassName("form-control img-fluid bg-light border-0")[0];
@@ -307,7 +308,8 @@ try {
       solveVellore(img, textBox);
     })
 
-  } else if(document.URL.match("vtopcc.vit.ac.in")){
+  } else if(document.URL.match("vtopcc.vit.ac.in") || document.URL.match(".vitap.ac.in") || document.URL.match(".vitbhopal.ac.in")){
+    console.log("other")
     var container = document.getElementById("page_outline");
     container.addEventListener('DOMSubtreeModified', ()=>{
       var captchaDiv = document.getElementById("captchaRefresh").children[0];

@@ -11,14 +11,14 @@
     },
     "content_scripts": [
         {
-            "matches":["*://*.vit.ac.in/*"],
+            "matches":["*://*.vit.ac.in/*", "*://*.vitap.ac.in/*", "*://*.vitbhopal.ac.in/*"],
             "js": ["cs.js"]
         }
     ],
     "web_accessible_resources": [
         {
             "resources":["/velloreWeights.json", "/chennaiWeights.json"],
-            "matches":["*://*.vit.ac.in/*"]
+            "matches":["*://*.vit.ac.in/*", "*://*.vitap.ac.in/*", "*://*.vitbhopal.ac.in/*"]
         }
     ],
     "content_security_policy":{},
