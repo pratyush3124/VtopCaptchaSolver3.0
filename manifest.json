@@ -12,7 +12,7 @@
     "content_scripts": [
         {
             "matches":["*://*.vit.ac.in/*", "*://*.vitap.ac.in/*", "*://*.vitbhopal.ac.in/*"],
-            "js": ["cs.js"]
+            "js": ["contentScripts.js"]
         }
     ],
     "web_accessible_resources": [
